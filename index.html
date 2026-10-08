@@ -3,16 +3,106 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <meta name="theme-color" content="#000000">
+  <meta name="theme-color" content="#05070a">
   <title>Null</title>
-  <script>
-    (function(){
-      const mobile = window.matchMedia("(max-width: 760px)").matches;
-      location.replace(mobile ? "mobile.html" : "desktop.html");
-    })();
-  </script>
+  <link rel="stylesheet" href="null.css">
 </head>
-<body style="background:#000;color:#7dd3fc;font-family:system-ui;padding:30px">
-  Loading Null...
+<body>
+  <div id="app">
+    <header class="topbar">
+      <button id="menuBtn" class="icon-btn" aria-label="Open chats">☰</button>
+      <div class="brand"><span class="brand-dot"></span>NULL</div>
+      <button id="brainBtn" class="icon-btn brain-btn" aria-label="Open Brain">◌</button>
+    </header>
+
+    <aside id="drawer" class="drawer" aria-hidden="true">
+      <div class="drawer-head">
+        <div>
+          <div class="eyebrow">NULL</div>
+          <h2>Chats</h2>
+        </div>
+        <button id="closeDrawer" class="icon-btn">×</button>
+      </div>
+      <button id="newChatBtn" class="new-chat-btn">＋ New chat</button>
+      <div id="chatList" class="chat-list"></div>
+      <div class="drawer-foot">
+        <button id="drawerBrainBtn" class="drawer-link">◌ Brain / Scribe</button>
+        <div id="cloudStatus" class="cloud-status">connecting…</div>
+      </div>
+    </aside>
+    <div id="scrim" class="scrim"></div>
+
+    <main id="home" class="screen home-screen">
+      <div class="home-core">
+        <div class="eye-wrap" aria-hidden="true">
+          <div class="eye-glow"></div>
+          <div class="null-eye">
+            <div class="eye-lid"></div>
+            <div class="eye-white">
+              <div class="iris"><div class="pupil"></div><div class="glint"></div></div>
+            </div>
+            <div class="eye-lid bottom"></div>
+          </div>
+        </div>
+
+        <div class="home-copy">
+          <div id="mainProse" class="main-prose"></div>
+          <div id="subProse" class="sub-prose"></div>
+        </div>
+
+        <button id="homeNewChat" class="primary-btn">New chat</button>
+      </div>
+    </main>
+
+    <main id="chat" class="screen chat-screen hidden">
+      <div class="chat-head">
+        <button id="chatBack" class="back-btn">‹</button>
+        <div>
+          <div id="chatTitle" class="chat-title">New chat</div>
+          <div class="chat-subtitle">Null is awake. Unfortunately.</div>
+        </div>
+      </div>
+      <div id="messages" class="messages"></div>
+    </main>
+
+    <form id="composer" class="composer" autocomplete="off">
+      <textarea id="input" rows="1" placeholder="Talk to Null…"></textarea>
+      <button id="sendBtn" class="send-btn" type="submit" aria-label="Send">↑</button>
+    </form>
+
+    <section id="brainSheet" class="sheet" aria-hidden="true">
+      <div class="sheet-handle"></div>
+      <div class="sheet-head">
+        <div>
+          <div class="eyebrow">NULL BRAIN</div>
+          <h2>Brain / Scribe</h2>
+        </div>
+        <button id="closeBrain" class="icon-btn">×</button>
+      </div>
+      <div class="brain-status">
+        <span id="brainDot" class="status-dot"></span>
+        <span id="brainText">Checking cloud…</span>
+      </div>
+      <label class="field-label" for="geminiKey">Gemini API key</label>
+      <div class="key-row">
+        <input id="geminiKey" type="password" placeholder="Paste your Gemini key">
+        <button id="saveKey" type="button" class="small-btn">Save</button>
+      </div>
+      <p class="tiny">Prototype mode: the key is stored only in this browser. For a real public release, move Gemini behind a server.</p>
+      <div class="memory-add">
+        <label class="field-label" for="memoryInput">Remember something</label>
+        <div class="memory-row">
+          <input id="memoryInput" type="text" placeholder="e.g. I prefer concise answers">
+          <button id="saveMemory" type="button" class="small-btn">Remember</button>
+        </div>
+      </div>
+      <div id="memoryList" class="memory-list"></div>
+    </section>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/12.19.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/12.19.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore-compat.js"></script>
+  <script src="core.js"></script>
 </body>
 </html>
