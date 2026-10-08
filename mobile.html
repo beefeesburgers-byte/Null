@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#000">
+<title>Null · Mobile</title>
+<link rel="stylesheet" href="null.css">
+</head>
+<body class="mobile">
+<header class="mobile-top">
+  <button class="icon-btn" id="menu">☰</button>
+  <div class="mobile-brand"><span class="null-mark">N</span><span>null</span></div>
+  <div id="status" class="status">connecting…</div>
+</header>
+
+<main>
+<section id="home" class="home mobile-home">
+  <div class="home-eye"><div class="eye-shell"><span></span></div></div>
+  <div id="homeMain" class="home-main"></div>
+  <div id="homeSub" class="home-sub"></div>
+  <button class="home-start" id="homeStart">Start talking</button>
+</section>
+
+<section id="chat" class="chat mobile-chat" hidden>
+  <div class="mobile-chat-head"><span id="chatTitle">New chat</span><button id="newChatTop">＋</button></div>
+  <div id="log" class="log"></div>
+</section>
+</main>
+
+<footer class="mobile-composer-wrap">
+  <div class="composer">
+    <textarea id="input" rows="1" placeholder="Say something, Z."></textarea>
+    <button id="send">↑</button>
+  </div>
+</footer>
+
+<div class="mobile-drawer" id="drawer">
+  <div class="drawer-card">
+    <div class="drawer-head"><span>null</span><button id="closeDrawer">×</button></div>
+    <button class="drawer-new" id="newChat">＋ New chat</button>
+    <div class="section-label">RECENT EVIDENCE</div>
+    <div class="chat-list" data-chat-list></div>
+    <div class="drawer-actions">
+      <button class="side-btn" id="scribeBtn">◈ Scribe</button>
+      <button class="side-btn" id="brainBtn">⚿ Brain</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="panelOverlay"></div>
+<aside class="panel" id="scribePanel">
+  <button class="panel-close" data-close="scribePanel">×</button>
+  <div class="panel-kicker">SCRIBE</div>
+  <h2>The receipts.</h2>
+  <p>The part of Null that remembers things.</p>
+  <div class="section-label">MEMORIES</div>
+  <div data-scribe-list></div>
+  <div class="memory-add"><input id="memoryInput" placeholder="Something worth remembering"><button id="addMemory">Add</button></div>
+  <div class="section-label">BRAIN</div>
+  <div class="memory-add"><input id="keyInput" type="password" placeholder="Gemini API key"><button id="saveKey">Save</button></div>
+  <button class="danger" id="wipe">Delete cloud data</button>
+</aside>
+
+<script src="https://www.gstatic.com/firebasejs/12.19.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/12.19.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore-compat.js"></script>
+<script src="core.js"></script>
+<script>
+NullCore.init();
+const $=id=>document.getElementById(id);
+function closeDrawer(){ $("drawer").classList.remove("open"); }
+$("menu").onclick=()=>$("drawer").classList.add("open");
+$("closeDrawer").onclick=closeDrawer;
+$("newChat").onclick=()=>{NullCore.newChat();closeDrawer();};
+$("newChatTop").onclick=()=>NullCore.newChat();
+$("homeStart").onclick=()=>{NullCore.newChat();$("input").focus();};
+$("send").onclick=()=>{const v=$("input").value;$("input").value="";$("input").style.height="auto";NullCore.send(v);};
+$("input").onkeydown=e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();$("send").click();}};
+$("input").oninput=e=>{e.target.style.height="auto";e.target.style.height=Math.min(e.target.scrollHeight,150)+"px";};
+function openPanel(){ $("keyInput").value=NullCore.getGeminiKey();$("scribePanel").classList.add("open");$("panelOverlay").classList.add("open");closeDrawer(); }
+$("scribeBtn").onclick=openPanel;$("brainBtn").onclick=openPanel;
+$("panelOverlay").onclick=()=>{$("scribePanel").classList.remove("open");$("panelOverlay").classList.remove("open");};
+document.querySelector("[data-close]").onclick=()=>{$("scribePanel").classList.remove("open");$("panelOverlay").classList.remove("open");};
+$("addMemory").onclick=async()=>{const v=$("memoryInput").value.trim();if(v){await NullCore.saveMemory(v);$("memoryInput").value="";}};
+$("saveKey").onclick=()=>{const v=$("keyInput").value.trim();if(v)NullCore.saveGeminiKey(v);};
+$("wipe").onclick=async()=>{if(confirm("Delete every Null chat and Scribe memory?"))await NullCore.deleteAll();};
+</script>
+</body>
+</html>
