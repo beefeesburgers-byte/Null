@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#000">
+<title>Null · Desktop</title>
+<link rel="stylesheet" href="null.css">
+</head>
+<body class="desktop">
+<aside class="sidebar">
+  <div class="brand"><div class="null-mark">N</div><div><div class="word">null</div><div class="version">v0.3</div></div></div>
+  <button class="new-chat" id="newChat">＋ New chat</button>
+  <div class="section-label">RECENT EVIDENCE</div>
+  <div class="chat-list" data-chat-list></div>
+  <div class="sidebar-bottom">
+    <button class="side-btn" id="scribeBtn">◈ Scribe <span>the receipts</span></button>
+    <button class="side-btn" id="brainBtn">⚿ Brain <span>Gemini</span></button>
+  </div>
+</aside>
+
+<main class="desktop-main">
+<header class="topbar">
+  <div id="chatTitle">New chat</div>
+  <div id="status" class="status">connecting to cloud…</div>
+</header>
+
+<section id="home" class="home">
+  <div class="home-eye"><div class="eye-shell"><span></span></div></div>
+  <div id="homeMain" class="home-main"></div>
+  <div id="homeSub" class="home-sub"></div>
+  <button class="home-start" id="homeStart">Start talking</button>
+</section>
+
+<section id="chat" class="chat" hidden>
+  <div id="log" class="log"></div>
+</section>
+
+<footer class="composer-wrap">
+  <div class="composer">
+    <textarea id="input" rows="1" placeholder="Say something, Z."></textarea>
+    <button id="send">↑</button>
+  </div>
+  <div class="composer-note">Null keeps the conversation. Scribe keeps the things worth remembering.</div>
+</footer>
+</main>
+
+<div class="overlay" id="panelOverlay"></div>
+<aside class="panel" id="scribePanel">
+  <button class="panel-close" data-close="scribePanel">×</button>
+  <div class="panel-kicker">SCRIBE</div>
+  <h2>The receipts.</h2>
+  <p>The part of Null that remembers things. Because apparently humans need filing systems for their own ideas.</p>
+  <div class="section-label">MEMORIES</div>
+  <div data-scribe-list></div>
+  <div class="memory-add"><input id="memoryInput" placeholder="e.g. Z is building AXIS"><button id="addMemory">Add</button></div>
+  <div class="section-label">BRAIN</div>
+  <div class="memory-add"><input id="keyInput" type="password" placeholder="Gemini API key"><button id="saveKey">Save</button></div>
+  <button class="danger" id="wipe">Delete cloud data</button>
+</aside>
+
+<script src="https://www.gstatic.com/firebasejs/12.19.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/12.19.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore-compat.js"></script>
+<script src="core.js"></script>
+<script>
+NullCore.init();
+const $=id=>document.getElementById(id);
+$("newChat").onclick=()=>NullCore.newChat();
+$("homeStart").onclick=()=>{ NullCore.newChat(); $("input").focus(); };
+$("send").onclick=()=>{const v=$("input").value; $("input").value=""; $("input").style.height="auto"; NullCore.send(v);};
+$("input").onkeydown=e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();$("send").click();}};
+$("input").oninput=e=>{e.target.style.height="auto";e.target.style.height=Math.min(e.target.scrollHeight,180)+"px";};
+$("scribeBtn").onclick=()=>{ $("keyInput").value=NullCore.getGeminiKey(); $("scribePanel").classList.add("open"); $("panelOverlay").classList.add("open"); };
+$("brainBtn").onclick=()=>{ $("keyInput").value=NullCore.getGeminiKey(); $("scribePanel").classList.add("open"); $("panelOverlay").classList.add("open"); $("keyInput").focus(); };
+$("panelOverlay").onclick=()=>{$("scribePanel").classList.remove("open");$("panelOverlay").classList.remove("open");};
+document.querySelector("[data-close]").onclick=()=>{$("scribePanel").classList.remove("open");$("panelOverlay").classList.remove("open");};
+$("addMemory").onclick=async()=>{const v=$("memoryInput").value.trim();if(v){await NullCore.saveMemory(v);$("memoryInput").value="";}};
+$("saveKey").onclick=()=>{const v=$("keyInput").value.trim();if(v)NullCore.saveGeminiKey(v);};
+$("wipe").onclick=async()=>{if(confirm("Delete every Null chat and Scribe memory?"))await NullCore.deleteAll();};
+</script>
+</body>
+</html>
